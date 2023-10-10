@@ -1,6 +1,13 @@
 const inquirer = require('inquirer');
 const colors = require('colors');
 
+let departmentList;
+let roleList;
+let managerList;
+
+function validateText() {
+  return true;
+}
 function startApp() {
   inquirer
     .prompt([
@@ -39,6 +46,8 @@ function startApp() {
           break;
       }
     })
+    
+    startApp();
 }
 
 function addDepartment() {
@@ -46,7 +55,8 @@ function addDepartment() {
    .prompt([
     {
       name: 'department',
-      message: 'What is the name of the department'
+      message: 'What is the name of the department',
+      validate: validateText
     }
    ]).then((answer) => {
     console.log(answer);
@@ -58,15 +68,19 @@ function addRole() {
     .prompt([
       {
         name: 'role',
-        message: 'What is the name of the role?'
+        message: 'What is the name of the role?',
+        validate: validateText
       },
       {
         name: 'salary',
+        type: 'number',
         message: 'What is the salary of the role?'
       },
       {
         name: 'belongsTo',
-        message: 'Which department does the role belong too?'
+        type: 'list',
+        message: 'Which department does the role belong too?',
+        choices: departmentList
       }
     ]).then((answer) => {
       console.log(answer);
@@ -78,23 +92,25 @@ function addEmployee() {
     .prompt([
       {
         name: 'firstName',
-        message: 'What is the employee\'s first name?'
+        message: 'What is the employee\'s first name?',
+        validate: validateText
       },
       {
         name: 'lastName',
-        message: 'What is the employee\'s last name?'
+        message: 'What is the employee\'s last name?',
+        validate: validateText
       },
       {
         name: 'role',
         type: 'list',
         message: 'What is the employee\'s last name?',
-        choices: roleArray
+        choices: roleList
       },
       {
         name: 'manager',
         type: 'list',
         message: 'Who is the employee\'s manager',
-        choices: managerArray
+        choices: managerList
       }
     ]).then((answer) => {
       console.log(answer);
