@@ -1,13 +1,24 @@
 const inquirer = require('inquirer');
 const colors = require('colors');
 
-let departmentList;
-let roleList;
-let managerList;
+let departmentList = [];
+let roleList = [];
+let managerList = [];
 
-function validateText() {
+const validateText = (input) => {
+  if(!input)
+    return 'Please enter a valid response.'.red;
+
+  return true;
+};
+
+const validateNumber = (input) => {
+  if (isNaN(input))
+    return 'Please enter a valid number.'.red;
+
   return true;
 }
+
 function startApp() {
   inquirer
     .prompt([
@@ -45,9 +56,9 @@ function startApp() {
           console.log('Update an Employee Role');
           break;
       }
+
     })
     
-    startApp();
 }
 
 function addDepartment() {
@@ -74,7 +85,8 @@ function addRole() {
       {
         name: 'salary',
         type: 'number',
-        message: 'What is the salary of the role?'
+        message: 'What is the salary of the role?',
+        validate: validateNumber
       },
       {
         name: 'belongsTo',
