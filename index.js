@@ -31,7 +31,7 @@ function startApp() {
         name: 'start',
         type: 'list',
         message: 'What would you like to do?',
-        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role', 'Quit']
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role', 'Update Employee Managers', 'View Employees by Manager', 'View Employees by Department', 'Quit']
       }
     ]).then((answer) => {
       if (answer.start === 'Quit') {
@@ -72,6 +72,15 @@ function startApp() {
           break;
         case 'Update an Employee Role':
           updateEmployee();
+          break;
+        case 'Update Employee Managers':
+          updateEmployeeManager();
+          break;
+        case 'View Employees by Manager':
+          viewByManager();
+          break;
+        case 'View Employees by Department':
+          viewByDepartment();
           break;
       }
      
@@ -178,6 +187,65 @@ function updateEmployee() {
     queryDB.updateEmployee(answer.name, answer.role_id)
       .then(() => {
         populateEmployeeList()
+        startApp();
+      });
+   });
+}
+
+function updateEmployeeManager() {
+  inquirer
+   .prompt([
+    {
+      name: 'name',
+      type: 'list',
+      message: 'Which employee would you like to update?',
+      choices: employeeList
+    },
+    {
+      name: 'role_id',
+      type: 'list',
+      message: 'Who is the employee\'s new manager?',
+      choices: managerList
+    }
+   ]).then((answer) => {
+    queryDB.updateEmployeeManager(answer.name, answer.role_id)
+      .then(() => {
+        startApp();
+      });
+   });
+}
+
+function viewByManager() {
+  inquirer
+   .prompt([
+    {
+      name: 'name',
+      type: 'list',
+      message: 'Please select a manager.',
+      choices: managerList
+    }
+   ]).then((answer) => {
+    queryDB.queryByManager(answer.name)
+      .then(([rows]) => {
+        console.table(rows);
+        startApp();
+      });
+   });
+}
+
+function viewByDepartment() {
+  inquirer
+   .prompt([
+    {
+      name: 'name',
+      type: 'list',
+      message: 'Please select a manager.',
+      choices: departmentList
+    }
+   ]).then((answer) => {
+    queryDB.queryByDepartment(answer.name)
+      .then(([rows]) => {
+        console.table(rows);
         startApp();
       });
    });

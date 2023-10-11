@@ -20,6 +20,7 @@ CREATE TABLE role (
 );
 
 -- Create Employee Table
+
 CREATE TABLE employee (
   id INT AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(30) NOT NULL,
