@@ -51,5 +51,5 @@ INSERT INTO employee (
     ('Lance', 'Morgan', 12, Null),
     ('Nicole', 'Minks', 11, 19),
     ('John', 'Tinkler', 11, 19),
-    ('Paula', 'Franks', 11, 19),
+    ('Paula', 'Franks', 11, 19);
 
