@@ -32,7 +32,7 @@ function startApp() {
         name: 'start',
         type: 'list',
         message: 'What would you like to do?',
-        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role', 'Update Employee Managers', 'View Employees by Manager', 'View Employees by Department', 'View Budget by Department', 'Quit']
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role', 'Update Employee Managers', 'View Employees by Manager', 'View Employees by Department', 'View Budget by Department', 'Delete a Department', 'Delete a Role', 'Delete a Employee', 'Quit']
       }
     ]).then((answer) => {
       if (answer.start === 'Quit') {
@@ -86,6 +86,15 @@ function startApp() {
         case 'View Budget by Department':
           viewBudgetByDepartment();
           break;
+        case 'Delete a Department':
+          deleteDepartment();
+          break;
+        case 'Delete a Role':
+          deleteRole();
+          break;
+        case 'Delete a Employee':
+          deleteEmployee();
+          break;  
       }
      
     })
@@ -267,6 +276,60 @@ function viewBudgetByDepartment() {
     queryDB.queryBudgetByDepartment(answer.name)
       .then(([rows]) => {
         console.table(rows);
+        startApp();
+      });
+   });
+}
+
+function deleteDepartment() {
+  inquirer
+   .prompt([
+    {
+      name: 'name',
+      type: 'list',
+      message: 'What department would you like to delete?',
+      choices: departmentList
+    }
+   ]).then((answer) => {
+    queryDB.deleteDepartment(answer.name)
+      .then(([rows]) => {
+        populateDepartmentList();
+        startApp();
+      });
+   });
+}
+
+function deleteRole() {
+  inquirer
+   .prompt([
+    {
+      name: 'name',
+      type: 'list',
+      message: 'What role would you like to delete?',
+      choices: roleList
+    }
+   ]).then((answer) => {
+    queryDB.deleteRole(answer.name)
+      .then(([rows]) => {
+        populateRoleList();
+        startApp();
+      });
+   });
+}
+
+function deleteEmployee() {
+  inquirer
+   .prompt([
+    {
+      name: 'name',
+      type: 'list',
+      message: 'What employee would you like to delete?',
+      choices: employeeList
+    }
+   ]).then((answer) => {
+    queryDB.deleteEmployee(answer.name)
+      .then(([rows]) => {
+        populateEmployeeList();
         startApp();
       });
    });
