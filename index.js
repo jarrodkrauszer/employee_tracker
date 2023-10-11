@@ -1,9 +1,14 @@
 const inquirer = require('inquirer');
-const colors = require('colors');
+const db = require('./db/connection');
+const DatabaseQueryManager = require('./lib/DatabaseQueryManager');
+require('colors');
+require('console.table');
 
 let departmentList = [];
 let roleList = [];
 let managerList = [];
+let employeeList = [];
+let queryDB;
 
 const validateText = (input) => {
   if(!input)
@@ -30,55 +35,72 @@ function startApp() {
       }
     ]).then((answer) => {
       if (answer.start === 'Quit') {
+        db.end();
         return;   
       }
       
       switch (answer.start) {
         case 'View All Departments':
-          console.log('View All Department');
+          queryDB.queryAllDepartments()
+            .then(([rows]) => {
+              console.table(rows);
+              startApp();
+            });
           break;
         case 'View All Roles':
-          console.log('View All Roles');
+          queryDB.queryAllRoles()
+            .then(([rows]) => {
+              console.table(rows);
+              startApp();
+            });
           break;
         case 'View All Employees':
-          console.log('View All Employees');
+          queryDB.queryAllEmployees()
+            .then(([rows]) => {
+              console.table(rows);
+              startApp();
+            });
           break;
         case 'Add a Department':
-          addDepartment();
+          addNewDepartment();
           break;
         case 'Add a Role':
-          addRole();
+          addNewRole();
           break;
         case 'Add an Employee':
-          addEmployee();
+          addNewEmployee();
           break;
         case 'Update an Employee Role':
-          console.log('Update an Employee Role');
+          updateEmployee();
           break;
       }
-
+     
     })
     
 }
 
-function addDepartment() {
+function addNewDepartment() {
   inquirer
    .prompt([
     {
-      name: 'department',
+      name: 'name',
       message: 'What is the name of the department',
       validate: validateText
     }
    ]).then((answer) => {
-    console.log(answer);
+    queryDB.addDepartment(answer)
+      .then(() => {
+        populateDepartmentList()
+        startApp();
+      });
    });
 }
 
-function addRole() {
+function addNewRole() {
   inquirer
     .prompt([
       {
-        name: 'role',
+        name: 'title',
         message: 'What is the name of the role?',
         validate: validateText
       },
@@ -89,45 +111,113 @@ function addRole() {
         validate: validateNumber
       },
       {
-        name: 'belongsTo',
+        name: 'department_id',
         type: 'list',
         message: 'Which department does the role belong too?',
         choices: departmentList
       }
     ]).then((answer) => {
-      console.log(answer);
+      
+      queryDB.addRole(answer)
+        .then(() => {
+          populateRoleList()
+          startApp();
+        });
     })
 }
 
-function addEmployee() {
+function addNewEmployee() {
   inquirer
     .prompt([
       {
-        name: 'firstName',
+        name: 'first_name',
         message: 'What is the employee\'s first name?',
         validate: validateText
       },
       {
-        name: 'lastName',
+        name: 'last_name',
         message: 'What is the employee\'s last name?',
         validate: validateText
       },
       {
-        name: 'role',
+        name: 'role_id',
         type: 'list',
-        message: 'What is the employee\'s last name?',
+        message: 'What is the employee\'s role?',
         choices: roleList
       },
       {
-        name: 'manager',
+        name: 'manager_id',
         type: 'list',
         message: 'Who is the employee\'s manager',
         choices: managerList
       }
     ]).then((answer) => {
       console.log(answer);
+      queryDB.addEmployee(answer);
+      populateManagerList();
+      startApp();
     });
 }
 
+function updateEmployee() {
+  inquirer
+   .prompt([
+    {
+      name: 'name',
+      type: 'list',
+      message: 'Which employee would you like to update?',
+      choices: employeeList
+    },
+    {
+      name: 'role_id',
+      type: 'list',
+      message: 'What new role would you like to assign?',
+      choices: roleList
+    }
+   ]).then((answer) => {
+    queryDB.updateEmployee(answer.name, answer.role_id)
+      .then(() => {
+        populateEmployeeList()
+        startApp();
+      });
+   });
+}
 
-startApp();
+function populateDepartmentList() {
+  queryDB.queryAllDepartments()
+    .then(([rows]) => {
+      departmentList = rows.map((row) => ({name: row.name, value: row.id}));
+    });
+}
+
+function populateRoleList() {
+  queryDB.queryAllRoles()
+    .then(([rows]) => {
+      roleList = rows.map((row) => ({name: row.title, value: row.id}));
+    });
+}
+
+function populateManagerList() {
+  queryDB.queryManagers()
+    .then(([rows]) => {
+      managerList = rows.map(person => ({name: `${person.first_name} ${person.last_name}`, value: person.id}));
+    });
+}
+
+function populateEmployeeList() {
+  queryDB.queryAllEmployees()
+    .then(([rows]) => {
+      employeeList = rows.map(person => ({name: `${person.first_name} ${person.last_name}`, value: person.id}));
+    });
+}
+
+function init() {
+  queryDB = new DatabaseQueryManager(db);
+  populateDepartmentList();
+  populateRoleList();
+  populateManagerList();
+  populateEmployeeList();
+  startApp();
+}
+
+init();

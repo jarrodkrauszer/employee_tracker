@@ -31,25 +31,30 @@ INSERT INTO employee (
   manager_id
 ) VALUES 
     ('Jarrod', 'Krauszer', 3, Null),
+    ('Ted', 'Bender', 7, Null),
+    ('Joann', 'Makara', 10, Null),
+    ('Lance', 'Morgan', 12, Null),
+    ('Lynn', 'Sanders', 5, 2),
     ('John', 'Smith', 2, 1),
-    ('Kelly', 'Jones', 2, 1),
-    ('Brian', 'Johnson', 1, 1),
     ('Jeff', 'Crops', 1, 1),
     ('Mike', 'Coleman', 4, 1),
+    ('Brian', 'Johnson', 1, 1),
     ('Scott', 'Benson', 4, 1),
-    ('Ted', 'Bender', 7, Null),
-    ('Kristen', 'Collins', 5, 8),
-    ('Lynn', 'Sanders', 5, 8),
-    ('Jessica', 'Krause', 6, 8),
-    ('Mike', 'Smithers', 6, 8),
-    ('Jim', 'Carson', 6, 8),
-    ('Joann', 'Makara', 10, Null),
-    ('Jesse', 'Marks', 9, 14),
-    ('Sean', 'Gardner', 9, 14),
-    ('Kim', 'Joyner', 8, 14),
-    ('Christine', 'Bonner', 8, 14),
-    ('Lance', 'Morgan', 12, Null),
-    ('Nicole', 'Minks', 11, 19),
-    ('John', 'Tinkler', 11, 19),
-    ('Paula', 'Franks', 11, 19);
+    ('Kelly', 'Jones', 2, 1),
+    ('Kristen', 'Collins', 5, 2),
+    ('Kim', 'Joyner', 8, 3),
+    ('Jim', 'Carson', 6, 2),
+    ('Jesse', 'Marks', 9, 3),
+    ('Sean', 'Gardner', 9, 3),
+    ('Paula', 'Franks', 11, 4),
+    ('Mike', 'Smithers', 6, 2),
+    ('Christine', 'Bonner', 8, 3),
+    ('Nicole', 'Minks', 11, 4),
+    ('Jessica', 'Krause', 6, 2),
+    ('John', 'Tinkler', 11, 4);
+    
+    
 
+    
+
+    
