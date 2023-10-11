@@ -7,6 +7,7 @@ require('console.table');
 let departmentList = [];
 let roleList = [];
 let managerList = [];
+let managerOptionNoneList = [];
 let employeeList = [];
 let queryDB;
 
@@ -31,7 +32,7 @@ function startApp() {
         name: 'start',
         type: 'list',
         message: 'What would you like to do?',
-        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role', 'Update Employee Managers', 'View Employees by Manager', 'View Employees by Department', 'Quit']
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role', 'Update Employee Managers', 'View Employees by Manager', 'View Employees by Department', 'View Budget by Department', 'Quit']
       }
     ]).then((answer) => {
       if (answer.start === 'Quit') {
@@ -81,6 +82,9 @@ function startApp() {
           break;
         case 'View Employees by Department':
           viewByDepartment();
+          break;
+        case 'View Budget by Department':
+          viewBudgetByDepartment();
           break;
       }
      
@@ -158,10 +162,9 @@ function addNewEmployee() {
         name: 'manager_id',
         type: 'list',
         message: 'Who is the employee\'s manager',
-        choices: managerList
+        choices: managerOptionNoneList
       }
     ]).then((answer) => {
-      console.log(answer);
       queryDB.addEmployee(answer);
       populateManagerList();
       startApp();
@@ -251,17 +254,35 @@ function viewByDepartment() {
    });
 }
 
+function viewBudgetByDepartment() {
+  inquirer
+   .prompt([
+    {
+      name: 'name',
+      type: 'list',
+      message: 'What department would you like to see the budget for?',
+      choices: departmentList
+    }
+   ]).then((answer) => {
+    queryDB.queryBudgetByDepartment(answer.name)
+      .then(([rows]) => {
+        console.table(rows);
+        startApp();
+      });
+   });
+}
+
 function populateDepartmentList() {
   queryDB.queryAllDepartments()
     .then(([rows]) => {
-      departmentList = rows.map((row) => ({name: row.name, value: row.id}));
+      departmentList = rows.map(row => ({name: row.name, value: row.id}));
     });
 }
 
 function populateRoleList() {
   queryDB.queryAllRoles()
     .then(([rows]) => {
-      roleList = rows.map((row) => ({name: row.title, value: row.id}));
+      roleList = rows.map(row => ({name: row.title, value: row.id}));
     });
 }
 
@@ -269,13 +290,15 @@ function populateManagerList() {
   queryDB.queryManagers()
     .then(([rows]) => {
       managerList = rows.map(person => ({name: `${person.first_name} ${person.last_name}`, value: person.id}));
+      managerOptionNoneList = managerList.slice();
+      managerOptionNoneList.unshift({name: 'None', value: null});
     });
 }
 
 function populateEmployeeList() {
   queryDB.queryAllEmployees()
     .then(([rows]) => {
-      employeeList = rows.map(person => ({name: `${person.first_name} ${person.last_name}`, value: person.id}));
+      employeeList = rows.map(row => ({name: `${row.first_name} ${row.last_name}`, value: row.id}));
     });
 }
 
