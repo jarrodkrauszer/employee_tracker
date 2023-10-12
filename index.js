@@ -7,7 +7,6 @@ require('console.table');
 let departmentList = [];
 let roleList = [];
 let managerList = [];
-let managerOptionNoneList = [];
 let employeeList = [];
 let queryDB;
 
@@ -95,10 +94,8 @@ function startApp() {
         case 'Delete a Employee':
           deleteEmployee();
           break;  
-      }
-     
+      }    
     })
-    
 }
 
 function addNewDepartment() {
@@ -171,7 +168,7 @@ function addNewEmployee() {
         name: 'manager_id',
         type: 'list',
         message: 'Who is the employee\'s manager',
-        choices: managerOptionNoneList
+        choices: [{name: 'None', value: null}, ...managerList]
       }
     ]).then((answer) => {
       queryDB.addEmployee(answer);
@@ -217,7 +214,7 @@ function updateEmployeeManager() {
       name: 'role_id',
       type: 'list',
       message: 'Who is the employee\'s new manager?',
-      choices: managerList
+      choices: [{name: 'None', value: null}, ...managerList]
     }
    ]).then((answer) => {
     queryDB.updateEmployeeManager(answer.name, answer.role_id)
@@ -353,8 +350,6 @@ function populateManagerList() {
   queryDB.queryManagers()
     .then(([rows]) => {
       managerList = rows.map(person => ({name: `${person.first_name} ${person.last_name}`, value: person.id}));
-      managerOptionNoneList = managerList.slice();
-      managerOptionNoneList.unshift({name: 'None', value: null});
     });
 }
 
